@@ -9,7 +9,6 @@ st.set_page_config(page_title="Data Sweeper", layout='wide')
 st.sidebar.title("User Input")
 user_name = st.sidebar.text_input("Enter Your Name")
 
-
 uploaded_files = st.sidebar.file_uploader(
     "Upload your files (CSV or Excel):", 
     type=["csv", "xlsx"], 
@@ -82,7 +81,12 @@ if uploaded_files:
         # Data Visualization
         st.subheader(f"📊 Data Visualizations for {file.name}")
         if st.checkbox(f"Show visualizations for {file.name}", key=f"viz_{file.name}"):
-            st.bar_chart(df.select_dtypes(include='number').iloc[:, :2])
+            # Check if there are numeric columns to visualize
+            numeric_df = df.select_dtypes(include='number')
+            if numeric_df.empty:
+                st.warning(f"No numeric columns available in {file.name} for visualization.")
+            else:
+                st.bar_chart(numeric_df.iloc[:, :2])
 
         # Conversion Options
         st.subheader(f"🔄 Conversion Options for {file.name}")
