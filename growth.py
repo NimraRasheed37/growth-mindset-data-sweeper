@@ -3,9 +3,8 @@ import pandas as pd
 import os
 from io import BytesIO
 
-
 st.set_page_config(page_title="Data Sweeper", layout='wide')
- 
+
 # Sidebar for user input and file upload
 st.sidebar.title("User Input")
 user_name = st.sidebar.text_input("Enter Your Name")
@@ -21,17 +20,17 @@ if user_name:
     st.sidebar.success(f"Welcome, {user_name}!")
 
 # Custom CSS
-st.markdown(
-    """
-    <style>
-    .stApp{
-        background-color: black;
-        color: white;
-    }   
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# st.markdown(
+#     """
+#     <style>
+#     .stApp{
+#         background-color: black;
+#         color: white;
+#     }   
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
 
 # Title and description on Main page
 st.title("💿 Data Sweeper by Nimra Rasheed")
