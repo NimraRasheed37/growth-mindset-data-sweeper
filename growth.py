@@ -5,7 +5,7 @@ from io import BytesIO
 
 
 st.set_page_config(page_title="Data Sweeper", layout='wide')
-
+ 
 # Sidebar for user input and file upload
 st.sidebar.title("User Input")
 user_name = st.sidebar.text_input("Enter Your Name")
