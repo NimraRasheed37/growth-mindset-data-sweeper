@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-print(os.path.exists(file))
 from io import BytesIO
 
 st.set_page_config(page_title="Data Sweeper", layout='wide')
