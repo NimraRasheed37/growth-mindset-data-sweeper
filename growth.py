@@ -9,7 +9,6 @@ st.set_page_config(page_title="Data Sweeper", layout='wide')
 st.sidebar.title("User Input")
 user_name = st.sidebar.text_input("Enter Your Name")
 
-
 uploaded_files = st.sidebar.file_uploader(
     "Upload your files (CSV or Excel):", 
     type=["csv", "xlsx"], 
@@ -42,15 +41,21 @@ if uploaded_files:
     for file in uploaded_files:
         file_ext = os.path.splitext(file.name)[-1].lower()
 
-        if file_ext == ".csv":
-            df = pd.read_csv(file)
-        elif file_ext == ".xlsx":
-            df = pd.read_excel(file)
-        else:
-            st.error(f"Unsupported file type: {file_ext}")
+        # Read file into DataFrame with error handling
+        df = None
+        try:
+            if file_ext == ".csv":
+                df = pd.read_csv(file)
+            elif file_ext == ".xlsx":
+                df = pd.read_excel(file, engine="openpyxl")
+            else:
+                st.error(f"Unsupported file type: {file_ext}")
+                continue
+        except Exception as e:
+            st.error(f"❌ Error reading {file.name}: {e}")
             continue
 
-        # file information
+        # File information
         st.write(f"**File Name:** {file.name}")
         st.write(f"**File Size:** {file.size / 1024:.2f} KB")
 
@@ -74,7 +79,7 @@ if uploaded_files:
                     df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
                     st.write("✅ Missing values filled!")
 
-        # Select columns to keep 
+        # Select columns to keep
         st.subheader(f"🎯 Select Columns to Keep in {file.name}")
         columns = st.multiselect(f"Choose columns for {file.name}", df.columns, default=df.columns)
         df = df[columns]
@@ -90,23 +95,26 @@ if uploaded_files:
 
         if st.button(f"Convert {file.name}"):
             buffer = BytesIO()
-            if conversion_type == "CSV":
-                df.to_csv(buffer, index=False)
-                file_name = file.name.replace(file_ext, ".csv")
-                mime_type = "text/csv"
-            elif conversion_type == "Excel":
-                df.to_excel(buffer, index=False, engine='openpyxl')
-                file_name = file.name.replace(file_ext, ".xlsx")
-                mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            try:
+                if conversion_type == "CSV":
+                    df.to_csv(buffer, index=False)
+                    file_name = file.name.replace(file_ext, ".csv")
+                    mime_type = "text/csv"
+                elif conversion_type == "Excel":
+                    df.to_excel(buffer, index=False, engine='openpyxl')
+                    file_name = file.name.replace(file_ext, ".xlsx")
+                    mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-            buffer.seek(0)
+                buffer.seek(0)
 
-            # Download Button
-            st.download_button(
-                label=f"Download {file.name} as {conversion_type}",
-                data=buffer,
-                file_name=file_name,
-                mime=mime_type
-            )
+                # Download Button
+                st.download_button(
+                    label=f"Download {file.name} as {conversion_type}",
+                    data=buffer,
+                    file_name=file_name,
+                    mime=mime_type
+                )
+            except Exception as e:
+                st.error(f"❌ Error converting {file.name}: {e}")
 
 st.success("🎉 All files processed successfully!")
