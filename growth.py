@@ -3,6 +3,10 @@ import pandas as pd
 import os
 from io import BytesIO
 
+import openpyxl
+print("openpyxl is installed and working!")
+
+
 st.set_page_config(page_title="Data Sweeper", layout='wide')
 
 # Sidebar for user input and file upload
